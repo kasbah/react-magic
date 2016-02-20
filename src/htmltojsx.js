@@ -167,6 +167,28 @@ function escapeSpecialChars(value) {
   return tempEl.innerHTML;
 }
 
+/**
+ * Escapes special characters by converting them to their escaped equivalent
+ * (eg. "<" to "&lt;"). Only escapes characters ["<", ">", "\""]
+ *
+ * @param {string} value
+ * @return {string}
+ */
+function escapeHTMLForAttribute(html) {
+  var start = html.indexOf('"');
+  var end = html.lastIndexOf('"');
+  if (end > start) {
+    return html.substring(0, start + 1) +
+           html.substring(start + 1, end)
+           .replace(/</g, '&lt;')
+           .replace(/>/g, '&gt;')
+           .replace(/"/g, '&quot;')
+           .replace(/'/g, '&apos;') +
+           html.substring(end);
+  }
+  return html;
+}
+
 var HTMLtoJSX = function(config) {
   this.config = config || {};
 
@@ -363,7 +385,9 @@ HTMLtoJSX.prototype = {
     var tagName = node.tagName.toLowerCase();
     var attributes = [];
     for (var i = 0, count = node.attributes.length; i < count; i++) {
-      attributes.push(this._getElementAttribute(node, node.attributes[i]));
+      var attribute = this._getElementAttribute(node, node.attributes[i]);
+      attribute = escapeHTMLForAttribute(attribute);
+      attributes.push(attribute);
     }
 
     if (tagName === 'textarea') {
