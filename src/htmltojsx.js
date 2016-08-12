@@ -584,8 +584,8 @@ StyleParser.prototype = {
       // "500px" -> 500
       return trimEnd(value, 'px');
     } else {
-      // Probably a string, wrap it in quotes
-      return '\'' + value.replace(/'/g, '"') + '\'';
+      // Probably a string, wrap it in brackets and quotes
+      return '{"' + value.replace(/"/g, '\"') + '"}';
     }
   }
 };
